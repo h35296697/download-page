@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Video</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #a855f7;
+        }
+        .instructions {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .instructions div {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            width: 45%;
+        }
+        .button {
+            background: #a855f7;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .button:hover {
+            background: #9333ea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Downloading Video</h1>
+        <div class="instructions">
+            <div>
+                <h3>PC Users</h3>
+                <p>Right click on the download button below and select "Save Link As..." to download the video to your computer.</p>
+            </div>
+            <div>
+                <h3>Mobile Users</h3>
+                <p>Tap and hold on the download button below and select "Download Link" to save the video to your device.</p>
+            </div>
+        </div>
+        <a id="downloadButton" class="button" href="#">Download Video</a>
+    </div>
+
+    <script>
+        // گرفتن URL از پارامترهای URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedUrl = urlParams.get('url');
+        if (encodedUrl) {
+            // دیکد کردن URL
+            const decodedUrl = atob(encodedUrl);
+            document.getElementById('downloadButton').href = decodedUrl;
+        } else {
+            document.getElementById('downloadButton').innerText = "No Video Found";
+            document.getElementById('downloadButton').style.pointerEvents = "none";
+        }
+    </script>
+</body>
+</html>
