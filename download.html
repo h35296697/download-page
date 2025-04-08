@@ -67,15 +67,26 @@
     </div>
 
     <script>
+        // تابع برای دیکد کردن Base64 با پشتیبانی از urlsafe
+        function urlSafeBase64Decode(base64String) {
+            // جایگزینی کاراکترهای urlsafe
+            base64String = base64String.replace(/-/g, '+').replace(/_/g, '/');
+            // اضافه کردن پدینگ اگه نیاز باشه
+            while (base64String.length % 4) {
+                base64String += '=';
+            }
+            return atob(base64String);
+        }
+
         // گرفتن URL از پارامترهای URL
         const urlParams = new URLSearchParams(window.location.search);
         let encodedUrl = urlParams.get('url');
         if (encodedUrl) {
             try {
-                // حذف پدینگ احتمالی (=) از Base64
-                encodedUrl = encodedUrl.replace(/=/g, '');
+                console.log("Encoded URL:", encodedUrl); // دیباگ
                 // دیکد کردن URL
-                const decodedUrl = atob(encodedUrl);
+                const decodedUrl = urlSafeBase64Decode(encodedUrl);
+                console.log("Decoded URL:", decodedUrl); // دیباگ
                 const downloadButton = document.getElementById('downloadButton');
                 downloadButton.href = decodedUrl;
                 // اضافه کردن ویژگی download برای دانلود خودکار
