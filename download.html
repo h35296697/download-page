@@ -1,115 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Video</title>
-    <style>
-        body {
-            background-color: #1a1a1a;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 500px;
-        }
-        h1 {
-            color: #a855f7;
-        }
-        .instructions {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-        }
-        .instructions div {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px;
-            border-radius: 5px;
-            width: 45%;
-        }
-        .button {
-            background: #a855f7;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 16px;
-        }
-        .button:hover {
-            background: #9333ea;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Download Video</title>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 600px;
+    }
+    a.button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    a.button:hover {
+      background-color: #218838;
+    }
+    .error {
+      color: #ff4c4c;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Downloading Video</h1>
-        <div class="instructions">
-            <div>
-                <h3>PC Users</h3>
-                <p>Right click on the download button below and select "Save Link As..." to download the video to your computer.</p>
-            </div>
-            <div>
-                <h3>Mobile Users</h3>
-                <p>Tap and hold on the download button below and select "Download Link" to save the video to your device.</p>
-            </div>
-        </div>
-        <a id="downloadButton" class="button" href="#">Download Video</a>
-    </div>
+  <div class="container" id="content">
+    <h1>در حال بارگذاری لینک...</h1>
+  </div>
 
-    <script>
-        // تابع برای چک کردن اینکه رشته Base64 معتبره
-        function isValidBase64(str) {
-            const base64Regex = /^[A-Za-z0-9\-_]+={0,2}$/;
-            return base64Regex.test(str);
-        }
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
 
-        // تابع برای دیکد کردن Base64 با پشتیبانی از urlsafe
-        function urlSafeBase64Decode(base64String) {
-            // جایگزینی کاراکترهای urlsafe
-            base64String = base64String.replace(/-/g, '+').replace(/_/g, '/');
-            // اضافه کردن پدینگ اگه نیاز باشه
-            while (base64String.length % 4) {
-                base64String += '=';
-            }
-            return atob(base64String);
-        }
+    function decodeBase64UrlSafe(base64) {
+      try {
+        const decoded = atob(base64.replace(/-/g, '+').replace(/_/g, '/'));
+        return decodeURIComponent(decoded);
+      } catch (e) {
+        return null;
+      }
+    }
 
-        // گرفتن URL از پارامترهای URL
-        const urlParams = new URLSearchParams(window.location.search);
-        let encodedUrl = urlParams.get('url');
-        if (encodedUrl) {
-            try {
-                console.log("Encoded URL:", encodedUrl); // دیباگ
-                // چک کردن اینکه رشته Base64 معتبره
-                if (!isValidBase64(encodedUrl)) {
-                    throw new Error("Invalid Base64 string");
-                }
-                // دیکد کردن URL
-                const decodedUrl = urlSafeBase64Decode(encodedUrl);
-                console.log("Decoded URL:", decodedUrl); // دیباگ
-                const downloadButton = document.getElementById('downloadButton');
-                downloadButton.href = decodedUrl;
-                // اضافه کردن ویژگی download برای دانلود خودکار
-                downloadButton.setAttribute('download', '');
-            } catch (e) {
-                console.error("خطا در دیکد کردن URL:", e);
-                document.getElementById('downloadButton').innerText = "Error: Invalid Link";
-                document.getElementById('downloadButton').style.pointerEvents = "none";
-            }
-        } else {
-            document.getElementById('downloadButton').innerText = "No Video Found";
-            document.getElementById('downloadButton').style.pointerEvents = "none";
-        }
-    </script>
+    const encodedUrl = getQueryParam("url");
+    const contentDiv = document.getElementById("content");
+
+    if (encodedUrl) {
+      const decodedUrl = decodeBase64UrlSafe(encodedUrl);
+      if (decodedUrl) {
+        contentDiv.innerHTML = `
+          <h1>دانلود آماده است</h1>
+          <a class="button" href="${decodedUrl}" target="_blank">📥 دانلود فایل</a>
+        `;
+      } else {
+        contentDiv.innerHTML = `<p class="error">خطا در رمزگشایی لینک!</p>`;
+      }
+    } else {
+      contentDiv.innerHTML = `<p class="error">لینک نامعتبر است!</p>`;
+    }
+  </script>
 </body>
 </html>
