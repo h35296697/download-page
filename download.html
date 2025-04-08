@@ -69,11 +69,22 @@
     <script>
         // گرفتن URL از پارامترهای URL
         const urlParams = new URLSearchParams(window.location.search);
-        const encodedUrl = urlParams.get('url');
+        let encodedUrl = urlParams.get('url');
         if (encodedUrl) {
-            // دیکد کردن URL
-            const decodedUrl = atob(encodedUrl);
-            document.getElementById('downloadButton').href = decodedUrl;
+            try {
+                // حذف پدینگ احتمالی (=) از Base64
+                encodedUrl = encodedUrl.replace(/=/g, '');
+                // دیکد کردن URL
+                const decodedUrl = atob(encodedUrl);
+                const downloadButton = document.getElementById('downloadButton');
+                downloadButton.href = decodedUrl;
+                // اضافه کردن ویژگی download برای دانلود خودکار
+                downloadButton.setAttribute('download', '');
+            } catch (e) {
+                console.error("خطا در دیکد کردن URL:", e);
+                document.getElementById('downloadButton').innerText = "Error: Invalid Link";
+                document.getElementById('downloadButton').style.pointerEvents = "none";
+            }
         } else {
             document.getElementById('downloadButton').innerText = "No Video Found";
             document.getElementById('downloadButton').style.pointerEvents = "none";
