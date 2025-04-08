@@ -67,6 +67,12 @@
     </div>
 
     <script>
+        // تابع برای چک کردن اینکه رشته Base64 معتبره
+        function isValidBase64(str) {
+            const base64Regex = /^[A-Za-z0-9\-_]+={0,2}$/;
+            return base64Regex.test(str);
+        }
+
         // تابع برای دیکد کردن Base64 با پشتیبانی از urlsafe
         function urlSafeBase64Decode(base64String) {
             // جایگزینی کاراکترهای urlsafe
@@ -84,6 +90,10 @@
         if (encodedUrl) {
             try {
                 console.log("Encoded URL:", encodedUrl); // دیباگ
+                // چک کردن اینکه رشته Base64 معتبره
+                if (!isValidBase64(encodedUrl)) {
+                    throw new Error("Invalid Base64 string");
+                }
                 // دیکد کردن URL
                 const decodedUrl = urlSafeBase64Decode(encodedUrl);
                 console.log("Decoded URL:", decodedUrl); // دیباگ
